@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Question 3</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+
+  body{
+    font-family: Montserrat, sans-serif;
+    background-color: #b5d3e7;
+    /* min-width: 900px; */
+    /* font-size: 15pt; */
+  }
+
+  p, ul, #underName{
+    font-size: 15pt;
+  }
+
+  #container{
+    height: calc(100vh - 40px);
+    top: 20px;
+    width: calc(100vw - 40px);
+    left: 20px;
+    border: 5px solid black;
+  }
+
+  #container, #main, #side{
+    overflow: auto;
+  }
+
+  #container > div{
+    border: 1px solid #666;
+    float: left;
+    text-align: center;
+  }
+
+  #head > .title{
+    float: left;
+  }
+
+  #home div{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    float: left;
+    /* border: 1px solid black; */
+    height: calc(15vh - 2*1px)
+  }
+
+  #head{
+    width: calc(100% - 2*1px);
+    height: calc(15vh - 2*1px);
+    text-align: center;
+  }
+
+  .title{
+    /* position: sticky; */
+    margin-left: 10px;
+    margin-top: 10px;
+    left: 10px;
+    top: 10px;
+    text-decoration: underline;
+    font-size: 2.5vw;
+  }
+
+
+  #head img{
+    float: left;
+    margin: 10px;
+    width: 10vh;
+  }
+
+  #name{
+    font-size: 8vh;
+    }
+
+  #side{
+    /* max-width: 280px; */
+    width: calc(30vw - 2*1px);
+    height: calc(100% - 15vh - 2*1px);
+  }
+
+  #side img{
+    width: 80px;
+  }
+
+  #side > div{
+    position: relative;
+    float: left;
+    margin: 25px;
+    /* border: 1px solid black; */
+  }
+
+  #about{
+    margin-left: 15px; margin-right: 15px;
+    margin-bottom: 50px;
+  }
+
+  #main{
+    width: calc(100% - 30vw - 2*1px);
+    height: calc(100% - 15vh - 2*1px);
+  }
+
+  #picdiv{
+    width: 20vw;
+    position: sticky;
+    float: left;
+    top: 10px;
+    /* border: 1px solid black; */
+  }
+
+  #pic{
+    width: calc(15vw);
+    max-width: 400px;
+    margin: 10px;
+    transition: 1s;
+  }
+
+  #pictures{
+    position: relative;
+    /* float: right; */
+    margin-left: 20vw;
+    min-width: 300px;
+    max-width: 800px;
+    text-align: center;
+    /* border: 1px solid black; */
+  }
+
+  #pictures img{
+    width: 90%;
+  }
+
+  .img{
+    margin: 20px 0px;
+  }
+
+  </style>
+
+  </head>
+  <body>
+
+    <div id = "container">
+
+        <div id = "head">
+            <div id = "home">
+                <div><a href = "Question1.html">
+                        <img src = "jake_images/home.jpg" alt = "Return to Q1">
+                      </a></div>
+                <!-- <div>Return to Question 1</div> -->
+            </div>
+            <div id = "name">Jake the Dog</div>
+            <div id = "underName">Friend - Father - Dog</div>
+        </div>  <!-- end of head -->
+
+        <div id = "side">
+          <h2 class = "title">About</h2>
+          <p id = "about">"Twilight falls on the peaceful forest, a twilight unaware of the struggles it both soothes and conceals.
+            The crickets begin to stir, rehearsing their musical rhapsodies.
+            In the distance, flashes of heat lightning illuminate a purple summer sky."</p>
+          <h2 class = "title">Friends</h2>
+          <div>
+            <div><a href = "https://adventuretime.fandom.com/wiki/Prismo" target = "blank">
+                    <img src = "jake_images/prismo.png" alt = "Profile Pic of Prismo">
+                    <div>Prismo</div>
+                  </a>
+            </div>
+          </div>
+          <div>
+            <div><a href = "https://adventuretime.fandom.com/wiki/Lady_Rainicorn" target = "blank">
+                    <img src = "jake_images/lady2.png" alt = "Profile Pic of Lady">
+                    <div>Lady</div>
+                </a>
+            </div>
+          </div>
+          <div>
+            <div><a href = "https://adventuretime.fandom.com/wiki/Finn" target = "blank">
+                    <img src = "jake_images/finn.png" alt = "Profile Pic of Finn">
+                    <div>Finn</div>
+                </a>
+            </div>
+          </div>
+          <div>
+            <div><a href = "https://adventuretime.fandom.com/wiki/Billy" target = "blank">
+                    <img src = "jake_images/billy.png" alt = "Profile Pic of Billy">
+                    <div>Billy</div>
+                </a>
+            </div>
+          </div>
+        </div> <!-- end of Side -->
+
+        <div id = "main">
+          <div id = "picdiv">
+            <div><a href = "https://youtu.be/qbsvZclUXh8" target = "blank">
+              <img id = "pic" src = "jake_images/jake.png" alt = "Profile Pic of Jake">
+            </a></div>
+            <div id = "profile">
+                <ul>
+                    <li>16 years of age</li>
+                    <li>Happily in love</li>
+                    <li>Former Criminal</li>
+                    <li>Player of videogames</li>
+                    <li>Lover of Pickles</li>
+                </ul>
+            </div>
+          </div>
+
+              <div id = "pictures">
+                <h2 id = "pictitle" class = "title">Recent Pictures</h2>
+                <div class = "img">
+                  <img src = "jake_images/jakes_children.jpg" alt = "Pic of Jake with his children">
+                  <p>New puppies! :)</p>
+                </div>
+                <div class = "img">
+                  <img src = "jake_images/lady.jpg" alt = "Pic of Lady">
+                  <p>My beautiful wife! :)</p>
+                </div>
+                <div class = "img">
+                  <img src = "jake_images/tired.jpg" alt = "Pic of Jake looking regretful">
+                  <p>sick of these damn kids</p>
+                </div>
+                <div class = "img">
+                  <img src = "jake_images/time_sandwich.jpg" alt = "Pic of Jake with a sandwich, elated">
+                  <p>Made a sandwich! :)</p>
+                </div>
+              </div>
+        </div> <!-- end of main -->
+
+    </div>
+
+  </body>
+</html>

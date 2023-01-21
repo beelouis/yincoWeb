@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" oncontextmenu="return false">
+  <head>
+    <meta charset="utf-8">
+    <title>A3 - Question 1</title>
+
+    <style>
+
+      body{
+        background-color: #ddd;
+      }
+
+      #formContainer{
+        position: relative;
+        left: calc((100vw - 800px) / 2);
+        width: 800px;
+      }
+
+      #formContainer div{
+        float: left;
+        margin: 10px;
+      }
+
+      .box{
+        width: 100px;
+        height: 100px;
+        float: left;
+        transition: 0.2s background;
+      }
+
+      .box:hover{
+        cursor: pointer;
+      }
+
+      #output{
+        position: relative;
+        width: 800px;
+        overflow: hidden;
+        left: calc(50vw - 400px);
+
+      }
+
+    </style>
+
+    <script>
+
+      window.onload = function(){
+          console.log("window loaded");
+          setup();
+      };
+
+      let boxCount = 0;
+
+      function setup(){
+          let defaultNum = 8; // I subtract 1 down here    v   due to 0 indexing, to make the default num == the index
+          document.getElementById("selects").children[defaultNum-1].setAttribute("selected", true);
+
+          let defaultCol = 1; // index 0 is the label, 1 is red, 2 is green, 3 is blue
+          document.getElementById("radioContainer").children[defaultCol].setAttribute("checked", true);
+
+          document.querySelector("form").addEventListener("submit", function(){
+            number = this.elements["number"].value;
+            color = this.elements["color"].value;
+            initCanvas(number, color);
+          });
+
+          document.addEventListener("keydown", function(event){
+              if (event.key == "s" || event.key == "S"){
+                swap();
+              }
+          });
+      }
+
+  // ===============================================================
+
+    function initCanvas(num, col){
+        for (let i = 0; i < num; i++){
+          let box = document.createElement("div");
+          box.id = `box ${boxCount}`;
+          boxCount++;
+          box.classList.add("box");
+          box.classList.add(col);
+          // adds as a classname either red, green or blue as a string
+          // and will later be used to highlight the box when hovered over
+
+          // find the randomised hue of that colour:
+          let colArr = colSwitch(col);  // function returns an array
+          let r = colArr[0]; let g = colArr[1]; let b = colArr[2];
+          box.classList.add(r);
+          box.classList.add(g);
+          box.classList.add(b);
+          let thisCol = `rgb(${r}, ${g}, ${b})`;
+          box.style.backgroundColor = thisCol;
+
+          box.addEventListener("click", function(){
+            let grow = true;  // grow
+            size(this, grow);
+          });
+
+          box.addEventListener("contextmenu", function(){
+            let grow = false; // shrink
+            size(this, grow);
+          });
+
+          box.addEventListener("mouseover", function(){changeColor(this);});
+          box.addEventListener("mouseout", function(){changeBack(this);});
+
+          document.getElementById("output").appendChild(box);
+        }
+      }
+
+// =========================================================================
+
+
+    function colSwitch(col){
+        let r,g,b;
+        let highCol = Math.floor(Math.random() * 200) + 55;
+        let lowCol1 = Math.floor(Math.random() * 50);
+        let lowCol2 = Math.floor(Math.random() * 50);
+
+        switch (col){
+          case "red":
+          // red value will be higher than green and blue
+              r = highCol;
+              g = lowCol1;
+              b = lowCol2;
+              break;
+          case "green":
+          // green value will be higher than red and blue
+              r = lowCol1;
+              g = highCol;
+              b = lowCol2;
+              break;
+          case "blue":
+          // blue value will be higher than red and green
+              r = lowCol1;
+              g = lowCol2;
+              b = highCol;
+              break;
+        }
+        return [r, g, b];
+      }
+
+// ======================================================================
+
+    function size(box, grow){
+        let width = parseInt(window.getComputedStyle(box).width);
+        if (grow){
+            if (width < 800){ // 800 is the size of the output field. could be re-written to have dynamic scaling to the gridSize
+              console.log(`${box.id} growing`);
+              width *= 2;
+            } else {
+              console.log("max size reached");
+              return;
+            }
+        }
+        if (!grow){
+          console.log(`${box.id} shrinking`);
+          width = width/2;
+        }
+        box.style.width = `${width}px`;
+      }
+
+// ==========================================================================
+
+    function swap(){
+        let parent = document.getElementById("output");
+        if (parent.children.length === 0){
+          console.log("no boxes to swap");
+          return;
+        }
+        let ran1, ran2;
+
+        do {
+          ran1 = Math.floor(Math.random() * boxCount);
+          ran2 = Math.floor(Math.random() * boxCount);
+        }
+        while (ran1 == ran2);
+
+        let box1, box2;
+        let place1, place2;
+        let index1, index2;
+
+        box1 = parent.children[ran1];
+        box2 = parent.children[ran2];
+        place1 = box1;
+        place2 = box2;
+        // uncomment if you want swapping to randomise the color (quite pretty I think):
+              // place1.style.backgroundColor = "#" + Math.floor(Math.random() * 200)
+              //              + Math.floor(Math.random() * 200) + Math.floor(Math.random() * 200);
+              // place2.style.backgroundColor = "#" + Math.floor(Math.random() * 200)
+              //              + Math.floor(Math.random() * 200) + Math.floor(Math.random() * 200);
+
+        index1 = Array.prototype.indexOf.call(parent.children, box1);
+        index2 = Array.prototype.indexOf.call(parent.children, box2);
+
+        parent.removeChild(box1);
+        parent.insertBefore(place1, parent.children[index2]);
+        parent.removeChild(box2);
+        parent.insertBefore(place2, parent.children[index1]);
+        place1.style.backgroundColor = `rgb(${place1.classList[2]}, ${place1.classList[3]}, ${place1.classList[4]})`;
+        place2.style.backgroundColor = `rgb(${place2.classList[2]}, ${place2.classList[3]}, ${place2.classList[4]})`;
+        // otherwise, if you hovered over a box while you swapped it, it would never change back
+        // to its originally randomised color. so I have to do it manually just in case
+
+        console.log(`${place1.id} swapped with ${place2.id}`);
+    }
+
+// ======================================================================
+// bonus code:
+// hovering over a box will accentuate its primary color
+
+// (I initially implemented this with 60 lines of code, finding what color it was meant to be
+// using data conversion and parseInt to get an array of rgb values, then looping over it to find the highest hue etc.)
+// classlists are easier :)
+
+    function changeColor(elem){
+    console.log(`Hovering over ${elem.id}, and converting its color to ${elem.classList[1]}`);
+      // classList == ["box", "chosen color, e.g. red blue or green", "red rgb value", "green rgb value", "blue rgb value"]
+      elem.style.backgroundColor = elem.classList[1];
+    }
+
+    function changeBack(elem){
+      elem.style.backgroundColor = `rgb(${elem.classList[2]}, ${elem.classList[3]}, ${elem.classList[4]})`;
+    }
+
+// end of bonus code -------------------------------------------------
+// ========================================================================
+
+    </script>
+
+  </head>
+  <body>
+
+    <div id = "everythingContainer">
+        <div id = "formContainer">
+            <form autocomplete = "off" onsubmit = "return false">
+
+                <div id = "selectContainer">
+                  <label for = "oneToTen">Choose a Number</label>
+                    <select id = "selects" name = "number">
+                      <option value = "1">1</option>
+                      <option value = "2">2</option>
+                      <option value = "3">3</option>
+                      <option value = "4">4</option>
+                      <option value = "5">5</option>
+                      <option value = "6">6</option>
+                      <option value = "7">7</option>
+                      <option value = "8">8</option>
+                      <option value = "9">9</option>
+                      <option value = "10">10</option>
+                      <!-- <option value = "64">64</option> -->
+                      <!-- uncomment for the option to fill the grid with 8x8 squares -->
+                    </select>
+                </div>
+
+                <div id = "radioContainer">
+                  <label for = "color">Choose a Color</label>
+                  <input type = "radio" name = "color" value = "red">Red
+                  <input type = "radio" name = "color" value = "green">Green
+                  <input type = "radio" name = "color" value = "blue">Blue
+                </div>
+
+                <div id = "submitContainer">
+                    <input type = "submit" id = "button" value = "Go">
+                </div>
+
+            </form>
+        </div>
+        <br><br><br>
+        <div id = "output"></div>
+    </div>
+
+
+  </body>
+</html>

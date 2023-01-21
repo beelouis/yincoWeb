@@ -1,0 +1,308 @@
+  <!DOCTYPE html>
+  <html lang="en" dir="ltr">
+  <head>
+      <meta charset="utf-8">
+      <title>Question 2</title>
+
+  <style>
+
+      body{
+        font-family: Arial, sans-serif;
+        font-size: 15pt;
+        background-color: #ddd;
+        transition: background 1s;
+      }
+
+      #home{
+        position: absolute;
+        left: 10px;
+        top: 10px;
+      }
+
+      #container{
+        position: absolute;
+        width: calc(100vw - 80px);
+        left: 40px;
+      }
+
+      #caption{
+        text-align: center;
+        text-decoration: underline;
+        font-size: 20pt;
+        margin-bottom: 20px;
+      }
+
+      img{
+        width: 30px;
+      }
+
+      table{
+        width: inherit;
+        border: 5px solid black;
+        margin: 10px;
+        user-select: none;
+        background-color: #fff;
+        /* would be nice to prevent double clicks from selecting
+        but for a table, you might want the user to be able to highlight text */
+      }
+
+      th{
+        background-color: #ffffff;
+        font-size: 25pt;
+      }
+
+      tr:nth-child(odd){
+        background-color: #cceeee;
+      }
+
+      tr:nth-child(even){
+        background-color: #ecfcdd;
+      }
+
+      td{
+        height: 1em;
+        text-align: center;
+        padding: 1em;
+        border: 1px solid black;
+      }
+
+      #selected{
+        background-color: #7f6; /*#ee0;*/
+        }
+
+      #delete{
+        position: absolute;
+        width: calc(100vw - 80px);
+        left: 40px;
+        height: 10vh;
+        min-height: 30pt;
+        bottom: 30px;
+        border: 5px solid black;
+        background-color: #d00000;
+        text-align: center;
+        color: white;
+        font-size: 20pt;
+        border-radius: 20px;
+        border-style: outset;
+        visibility: hidden;
+      }
+
+      #delete span{
+        position: relative;
+        top: calc(50% - 10pt);
+      }
+
+      #delete:active{
+        border-style: inset;
+      }
+
+      #delete:hover{
+        cursor:pointer;
+      }
+
+      #big{
+        position: absolute;
+        width: calc(100vw - 200px);
+        height: calc(100vh - 200px);
+        left: 100px;
+        top: 100px;
+        background-color: #e11;
+        font-size: calc(10vw - 20px);
+        visibility: hidden;
+      }
+
+      #big:hover{
+        cursor: pointer;
+      }
+
+  </style>
+
+  <script>
+
+  // Adding ID, className and Event Listeners to the rows. Adding functionality to right click ==============================
+
+    window.onload = setup;
+
+    function setup(){
+      let tablebody = document.querySelector("tbody");
+      for (let i = 0; i < tablebody.children.length; i++){
+        tablebody.children[i].id = `Row ${i+1}`;
+        tablebody.children[i].className = "unselected";
+        tablebody.children[i].addEventListener("click", function(){
+          select(this);
+        });
+        // Select and then right click to delete:
+        // also allows you to double right click to delete, by selecting it on the first right click
+        tablebody.children[i].addEventListener("contextmenu", function(){
+          if (this.id === "selected"){
+            dlt(this);
+          } else {
+            select(this);
+          }
+        });
+      }
+    }
+
+// Select/Deselect/Reselect logic ====================================================================================================
+
+    let deleteBtn = null;
+    let idplaceholder = null;
+    let selected = null;
+
+    function select(elem){
+
+      if (idplaceholder === null){
+        // checks if nothing is currently selected
+          idplaceholder = elem.id;
+          // so that we can refer back to the selected id later
+          elem.id = "selected";
+          selected = elem;
+          // selected object passed into delete function later
+          console.log(idplaceholder + " has been selected");
+          document.getElementById("delete").style.visibility = "visible";
+      } else {
+        // if something is already selected, check if the user has selected the row thats already selected, or a new row
+            if (elem.id === "selected"){
+                elem.id = idplaceholder;
+                // push the original id back onto the selected row
+                idplaceholder = null;
+                selected = null;
+                console.log(elem.id + " has been deselected");
+                document.getElementById("delete").style.visibility = "hidden";
+            } else {
+              // idplaceholder is not null, AND elem.id is NOT selected for this else statement to run.
+              // idplaceholder ! null means something has been selected
+              // elem.id ! "selected" means that it isnt the row the user just clicked on which is already selected
+                selected.id = idplaceholder;
+                // push original id back onto the peviously selected element
+                idplaceholder = elem.id;
+                // assign id of the newly selected element to the placeholder instead
+                selected = elem;
+                selected.id = "selected";
+                // select the row the user just clicked on
+                console.log(idplaceholder + " has been selected instead");
+            }
+      }
+    }
+
+// Remove a row from the table =======================================================================================
+
+  function dlt(elem){
+      console.log(`${idplaceholder} has been removed`);
+      elem.parentNode.removeChild(elem);
+      document.getElementById("delete").style.visibility = "hidden";
+      idplaceholder = null;
+
+      // :)
+      if (document.getElementById("body").children.length == 0){
+        const timeout1 = 5000;    // first pause
+        const timeout2 = 1000;    // pause before face
+        const timeout3 = 15000;   // pause before button
+        const colInterval = 200;  // color change interval
+
+          document.getElementById("caption").innerHTML = "Some widely... used.......... nevermind"
+          alert("youve eaten the whole table :(");
+          if (confirm("reload?")){
+              location.reload();
+          } else {
+              alert("okay...");
+              alert("enjoy the empty table I guess?");
+                  setTimeout(function(){
+                        if(confirm("okay, this is the last time I'll ask, would you like to reload?")){
+                          location.reload();
+                        } else {
+                          alert("alright.......... \n\nbut im worried about you");
+                          document.getElementById("caption").innerHTML = "..............................."
+                              setTimeout(function(){
+                                alert(":/");
+                                      setTimeout(function(){
+                                        document.body.style.backgroundColor = "yellow";
+                                        document.getElementById("big").style.visibility = "visible";
+                                        document.getElementById("container").style.visibility = "hidden";
+                                        document.getElementById("home").style.visibility = "hidden";
+                                        document.title = "OK, ITS AN ORDER NOW ";
+                                        setInterval(function(){
+                                          document.body.style.backgroundColor = "#" + Math.floor(Math.random() * 50) +
+                                          Math.floor(Math.random() * 100) + Math.floor(Math.random() * 200);
+                                        }, colInterval);
+                                      }, timeout3);
+                              }, timeout2);
+                        }
+                  }, timeout1);
+            }
+        }
+    }
+
+    function reload(){
+      alert("thank you..........");
+      location.reload()
+    }
+
+  </script>
+
+  </head>
+  <body>
+
+  <div id = "home">
+      <div><a href = "Question1.html">
+              <img src = "jake_images/home.jpg" alt = "return to Q1">
+            </a></div>
+      <!-- <div>Return to Question 1</div> -->
+  </div>
+  <div id = "container">
+    <div id = "caption">Some widely used programming languages</div>
+      <table id = "table">
+          <thead id = "head">
+              <tr>
+                <th>Name</th> <th>First Appeared</th><th>Paradigm</th> <th>Link</th>
+              </tr>
+          </thead>
+
+          <tbody id = "body" oncontextmenu="return false;">
+            <!-- prevents contextmenu from coming up on right click, since i have right click to delete -->
+              <tr>
+                <td>C</td> <td>1972</td> <td>Imperative</td> <td><a target = "blank" href = "https://en.wikipedia.org/wiki/C_(programming_language)">
+                  <img src ="logos/c_lang.png" alt = "Link to C Wiki"></a></td>
+              </tr>
+              <tr>
+                <td>Java</td> <td>1995</td> <td>Object-oriented</td> <td><a target = "blank" href = "https://en.wikipedia.org/wiki/Java_(programming_language)">
+                  <img src ="logos/java_lang.png" alt = "Link to Java Wiki"></a></td>
+              </tr>
+              <tr>
+                <td>C++</td> <td>1983</td> <td>Object-oriented</td> <td><a target = "blank" href = "https://en.wikipedia.org/wiki/C%2B%2B">
+                  <img src ="logos/c++_lang.png" alt = "Link to C++ Wiki"></a></td>
+              </tr>
+              <tr>
+                <td>Ruby</td> <td>1995</td> <td>Object-oriented, Dynamic</td> <td><a target = "blank" href = "https://en.wikipedia.org/wiki/Ruby_(programming_language)">
+                  <img src ="logos/ruby_lang.svg" alt = "Link to Ruby Wiki"></a></td>
+              </tr>
+              <tr>
+                <td>Python</td> <td>1991</td> <td>Object-oriented, Dynamic</td> <td><a target = "blank" href = "https://en.wikipedia.org/wiki/Python_(programming_language)">
+                  <img src ="logos/python_lang.png" alt = "Link to Python Wiki"></a></td>
+              </tr>
+              <tr>
+                <td>Javascript</td> <td>1995</td> <td>Object-oriented, Scripting</td> <td><a target = "blank" href = "https://en.wikipedia.org/wiki/JavaScript">
+                  <img src ="logos/javascript_lang.png" alt = "Link to Javascript Wiki"></a></td>
+              </tr>
+              <tr>
+                <td>Haskell</td> <td>1991</td> <td>Functional</td> <td><a target = "blank" href = "https://en.wikipedia.org/wiki/Haskell_(programming_language)">
+                  <img src ="logos/haskell_lang.svg" alt = "Link to Haskell Wiki"></a></td>
+              </tr>
+          </tbody>
+      </table>
+    </div>
+
+    <div id = "delete" onclick = "dlt(selected)"><span>Delete Row</span></div>
+
+    <input type = "button" id = "big" value = "RELOAD THE PAGE" onclick = "reload()">
+
+  <!-- https://stackoverflow.com/questions/10683712/html-table-sort -->
+  <!-- you could create a small button on the Name, Data and Paradigm columns
+   then it would run through a loop that organised by
+   alphabetical order for Name
+   chronological order for date
+   and grouping by paradigm
+   then swap each row accordingly -->
+
+  </body>
+  </html>

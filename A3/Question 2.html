@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>A3 - Question 2</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&family=Slabo+27px&display=swap" rel="stylesheet">
+    <style>
+
+      body{
+        font-family: 'Poppins', sans-serif;
+        font-style: bold;
+        background-color: #ddd;
+      }
+
+      #table{
+        position: relative;
+        width: calc(100vh - 300px);
+        height: calc(100vh - 300px);
+        max-width: 80vw;
+        max-height: 80vw;
+        left: calc(50vw - (100vh - 300px)/2);
+        border: 1px solid black;
+        user-select: none;
+      }
+
+      tr, td{
+        border: 1px solid red;
+        padding: none;
+        text-align: center;
+        background-color: white;
+        transition: background 1s;
+      }
+
+      td:hover{
+        cursor: pointer;
+      }
+
+      #html{
+        position: relative;
+        width: calc(100vh - 300px);
+        left: calc(50vw - (100vh - 300px)/2);
+        height: 80px;
+        margin-bottom: 50px;
+        text-align: center;
+      }
+
+      #html, input{
+        font-size: 16pt;
+      }
+
+      #num{
+        width: 50px;
+      }
+
+      #win, #reload{
+        visibility: hidden;
+      }
+
+      #win{
+        font-size: 3vh;
+      }
+
+      #reload{
+        width: 200px;
+        padding: 3px;
+        border: 1px solid red;
+        border-radius: 25px;
+        background-color: white;
+      }
+
+      #reload:hover{
+        cursor: pointer;
+        background-color: #ecc;
+      }
+
+    </style>
+
+    <script>
+
+// the entire grid size will be determined by the window size,
+// but gets tempermental if you resize the window AFTER the grid has been created
+
+// global variables:
+    let gridSize;         // default of 3, unless user input set to true.
+    let grid = [];        // 2D array created in the initArrays function
+    let playing = false;  // Determines whether the game is over or not
+    let XorO = true;      // Determines whether the current player is X or O
+    let curPlayer;        // Is set to X or O depending on XorO
+    let numClicks = 0;    // Counts the number of moves
+
+// =================================================================================
+
+    function setup(){
+      // set this to true to see a user input for gridSize
+      // for EXTREME tic-tac-toe gamers only B)
+      let userInput = false;
+
+      if (userInput){
+        let button = document.getElementById("button");
+        button.addEventListener("click", start);
+      } else{
+        start();
+      }
+    }
+
+// =====================================================
+
+    function start(){
+      document.getElementById("html").style.visibility = "hidden";
+      playing = true;
+      console.log("playing");
+      // build a default grid of 3x3 if theres no user input:
+      gridSize = num.value || 3;
+      buildBoard();
+    }
+
+  function buildBoard(){
+      // creating the function array every time probably isnt efficient
+      let funcArr = initArrays();
+      tdCount = 0;
+      let board = document.getElementById("table");
+
+      for (let y = 0; y < grid.length; y++){
+          let row = document.createElement("tr");
+          row.id = "row_" + y;
+          let boardHeight = parseInt(window.getComputedStyle(board).height);
+          row.style.height = boardHeight / gridSize + "px";
+          row.style.width = boardHeight + "px";
+
+          for (let x = 0; x < grid.length; x++){
+              let box = document.createElement("td");
+              box.style.height = boardHeight / gridSize + "px";
+              box.style.width = boardHeight / gridSize + "px";
+              box.style.fontSize = parseInt(box.style.height)*0.5 + "px";
+              box.id = "box " + tdCount;
+              box.addEventListener("mouseover", hover);
+              box.addEventListener("mouseout", unhover);
+              box.addEventListener("click", function(){
+                draw();
+                checkWin(funcArr);
+                // stalemate checked after checkwin, in case the final click wins the game
+                checkStalemate();
+              });
+              // push the html box to the 2D array
+              grid[y][x] = box;
+              tdCount++;
+              row.appendChild(box);
+          }
+          board.appendChild(row);
+      }
+    }
+
+// =====================================================
+
+  // Only highlight boxes when the game is being played, and when a square is unselected
+    function hover(){
+      if (playing && !event.target.innerHTML){
+        event.target.style.backgroundColor = "#fbb";
+      }
+    }
+
+    function unhover(){
+      if (playing && !event.target.innerHTML){
+        event.target.style.backgroundColor = "white";
+      }
+    }
+
+// ======================================================
+
+    function draw(){
+      // XorO toggles back and forth, determining current player
+      // only toggles when the game isnt over, and when the square hasnt been selected
+      if (playing && !event.target.innerHTML){
+        if (XorO){
+          curPlayer = "X";
+        } else {
+          curPlayer = "O";
+        }
+        event.target.innerHTML = curPlayer;
+        event.target.style.backgroundColor = "#fedddd";
+        console.log(`${event.target.id} selected, and set to ${curPlayer}`);
+        XorO = !XorO;
+        numClicks++;
+      }
+    }
+
+// =========================================================
+
+  function checkStalemate(){
+    // when all the squares have been selected, and the check win has returned false, stalemate
+    if (playing){
+      if (numClicks == tdCount){
+        if(confirm("STALEMATE\n\nPlay Again?")){
+          location.reload();
+        }
+        playing = false;
+      }
+    }
+  }
+
+// =========================================================
+
+  function checkWin(funcArr){
+    if (playing){
+      let posX, posY;
+      let clicked = event.target;
+      // This will be used to check for matches against the innerHTML of all the winning squares
+      let content = clicked.innerHTML;
+
+      for (let y = 0; y < gridSize; y++){
+        for (let x = 0; x < gridSize; x++){
+          // Find the X and Y pos of the selected html element in the 2D array
+          if (clicked == grid[y][x]){
+            posY = y;
+            posX = x;
+          }
+        }
+      }
+
+      for (let i = 0; i < funcArr.length; i++){
+        // a new variable for each loop over the possible win states:
+        let matchCount = 0;
+        winBoxes = funcArr[i](posY, posX);
+        for (let k = 0; k < winBoxes.length; k++){
+          if (content == winBoxes[k].innerHTML){
+            matchCount++;
+            // for a 3x3 grid, 3 matches is a win.
+            if (matchCount == gridSize){
+
+              switch (funcArr[i].name){
+                case "verticalLoop":
+                  console.log(`${curPlayer} wins vertically on column ${posX}`);
+                  break;
+                case "horizontalLoop":
+                  console.log(`${curPlayer} wins horizontally on row ${posY}`);
+                  break;
+                case "diagonalLoopDown":
+                  console.log(`${curPlayer} wins diagonally, top left to bottom right`);
+                  break;
+                case "diagonalLoopUp":
+                  console.log(`${curPlayer} wins diagonally, bottom left to rop right`);
+                  break;
+                }
+              final(winBoxes);
+              return;
+            }
+          }
+        }
+      }
+    }
+  }
+
+// ===========================================================
+
+  function final(winArr){
+      for (let i = 0; i < winArr.length; i++){
+        // highlight the winning line
+        winArr[i].style.backgroundColor = "#f69";
+      }
+      for (let i = 0; i < gridSize; i++){
+        for (let k = 0; k < gridSize; k++){
+          // reset the cursor style so it doesnt appear clickable anymore
+          grid[i][k].style.cursor = "default";
+        }
+      }
+      playing = false;
+      // present win message
+      let win = document.getElementById("win");
+      let btn = document.getElementById("reload");
+      win.style.visibility = "visible";
+      btn.style.visibility = "visible";
+      win.innerHTML = `${curPlayer} WON`
+  }
+
+// ===========================================================
+
+  function initArrays(){
+    // create the 2D array, which will later be filled with html elements:
+      for (let y = 0; y < gridSize; y++){
+        let row = [];
+        for (let x = 0; x < gridSize; x++){
+          row.push(x);
+        }
+        grid.push(row);
+      }
+
+      // Cant be put into global scope I think because of how some loops use dynamic pos values
+      // This allows me to use a for loop to check against all possible win conditions:
+      let funcArr = [
+        verticalLoop,
+        horizontalLoop,
+        diagonalLoopDown,
+        diagonalLoopUp
+      ];
+      return funcArr;
+    }
+
+// ===============================================================
+// Each function creates an array of grids within the 2D array which line up,
+// and will be checked against to find out if the player has won
+
+  function verticalLoop(posY, posX){
+        let vArr = [];
+        for (let i = 0; i < gridSize; i++){
+          // the x value stays the same, while the y value increments (vertically)
+          vArr.push(grid[i][posX]);
+        }
+        return vArr;
+      }
+
+  function horizontalLoop(posY, posX){
+        let hArr = [];
+        for (let i = 0; i < gridSize; i++){
+          // the y value stays the same, while the x value increments (horizontally)
+          hArr.push(grid[posY][i]);
+        }
+        return hArr;
+      }
+
+  function diagonalLoopDown(){
+      // yes, this is awful camel casing
+        let dDArr = [];
+        for (let i = 0; i < gridSize; i++){
+          // as i increments, x and y both increment,
+          // moving down on the screen (y++), and right (x++)
+          dDArr.push(grid[i][i]);
+        }
+        return dDArr;
+      }
+
+  function diagonalLoopUp(){
+        let dUArr = [];
+        for (let i = 0; i < gridSize; i++){
+          // as i increments, the y value decreases, and the x value increases,
+          // moving up on the screen (y--), and right (x++)
+          dUArr.push(grid[gridSize-i-1][i]);
+        }
+        return dUArr;
+      }
+
+  </script>
+  </head>
+
+  <body onload = "setup()">
+
+    <div id = "html">
+        <div>
+          <p id = "win"></p>
+          <input id = "reload" type = "button"  onclick = "location.reload()" value = "Play Again"></input>
+        </div>
+
+        <div id = "inputs">
+          <label for "num">Select a grid size:</label>
+          <input id = "num" type = "number" value = "3" min = "3" max = "10" autocomplete = "off" name = "num">
+          <input id = "button" type = "button" value = "run">
+        </div>
+    </div>
+
+    <div id = "container">
+      <table id = "table"></table>
+    </div>
+
+  </body>
+</html>

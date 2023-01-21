@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Question 1</title>
+
+    <style>
+
+      body{
+        font-family: Arial, sans-serif;
+        font-size: 20pt;
+      }
+
+      #container{
+        position: absolute;
+        width: calc(100vw - 300px);
+        left: 150px;
+        top: calc(50vh - 100px);
+        padding-bottom: 15px;
+      }
+
+      .button{
+        text-align: center;
+        border: 3px solid #599;
+        padding: 8px;
+        margin-top: 5px; margin-bottom: 5px; margin-left: 5px; margin-right: 5px;
+        width: calc(100%/4 - 2*8px - 2*3px - 2*5px);
+        min-width: 100px;
+        float: left;
+        transition: 0.3s background-color;
+        box-shadow: 2px 2px 2.5px 0px gray;
+        border-style: outset;
+        border-radius: 25px;
+        background-color: #eee;
+      }
+
+      .button:hover{
+        background-color: #c11;
+        cursor: pointer;
+      }
+
+      .button:active{
+        box-shadow: revert;
+        border-style: inset;
+      }
+
+      a:visited, a:link{
+        color: black;
+      }
+
+      /* box-shadow
+      https://www.w3schools.com/css/css_border.asp
+      https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow
+      box-sizing:
+      border-box; */
+
+    </style>
+
+    <script>
+
+      function cfm(){
+          if (confirm("You're already looking at it. \n\nLoad anyway?")){
+            location.open("Question1.html");
+          }
+      }
+
+    </script>
+
+  </head>
+  <body>
+
+    <div id = "container">
+        <a href = "Question1.html">
+          <div class = "button" onclick = "cfm(); return false;">Question 1</div>
+        </a>
+        <a href = "Question2.html">
+          <div class = "button">Question 2</div>
+        </a>
+        <a href = "Question3.html">
+          <div class = "button">Question 3</div>
+        </a>
+        <a href = "Question4.html">
+          <div class = "button">Question 4</div>
+        </a>
+    </div>
+
+  </body>
+</html>

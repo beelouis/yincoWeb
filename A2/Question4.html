@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Question 4</title>
+
+  <style>
+
+  body{
+    font-family: Arial, sans-serif;
+  }
+
+  #input{
+    position: relative;
+    width: calc(100vw - 450px);
+    text-align: center;
+    font-size: 15pt;
+  }
+
+  #container div{
+    float: left;
+  }
+
+  #submit, #btn, #status{
+    margin-left: 10px;
+  }
+
+  #sentence{
+    position: relative;
+    font-size: 4vw;
+    width: calc(100vw - 20px);
+    left: 10px;
+    top: calc(50vh - 100px);
+    text-align: center;
+    user-select: none;
+    /* stops repeated clicks from highlighting the text */
+  }
+
+  #sentence:hover{
+    cursor: pointer;
+  }
+
+  </style>
+
+  <script>
+
+  // Presetup ==========================================================================================
+
+    let status; // used as a HTML element reference in the changeByInc function
+
+    window.onload = function(){
+        status = document.getElementById("status");
+        status.innerHTML = "Click highlights word red";
+
+        setup();   // runs once by default
+
+        document.querySelector("form").addEventListener("submit", function(){
+            if (!confirm("Youll lose this version of the game if you run the code again")){
+              return;
+            }
+            setup();
+        });
+    }
+
+  // Toggle button code ===================================================================================
+
+    let change = true;   // used as a condition in the swap function
+
+    function changeByInc(){
+      if (change){
+          status.innerHTML = "Click increments color \of word (way cooler)";
+      } else {
+          status.innerHTML = "Click highlights word red";
+      }
+      change = !change;
+    }
+
+  // Creating the sentence element from user input ============================================================
+
+    let div;  // used as the parentnode of the spans/words in swap function
+
+    function setup(){
+        let sentence = document.getElementById("input").value;
+        // Input has default value of "the quick brown fox..."
+        let sentArr = sentence.split(" ");
+
+        div = document.getElementById("sentence");
+        div.innerHTML = "";
+        // so that it replaces the old value if you rerun it
+
+        for (let i = 0; i < sentArr.length; i++){
+            let span = document.createElement("span");
+            let text = document.createTextNode(sentArr[i] + " ");
+            span.appendChild(text);
+            span.setAttribute("id", "0");
+            span.addEventListener("click", function(){
+                swap(this);
+            });
+            div.appendChild(span);
+        }
+    }
+
+  // Swap Logic ========================================================================================
+
+    function swap(elem){
+          let elemIndex = null;
+          let nextElem = null;
+          let objectPlaceholder = null;
+          // assigning the entire object to a placeholder was more useful than swapping innerhtmls
+          // because it was really hard to set the correct properties to the clicked object when they would be swapped
+          let lastWord = false;
+
+          if (!change){    // toggle button
+              colorCode(elem);
+          } else {
+              elem.style.color = "red";
+              elem.className = "selected"
+              // cant change color by adding a classname, because Ive used inline css to change the color in the increment option, which overrides it
+          }
+
+          elemIndex = Array.prototype.indexOf.call(div.children, elem);
+          // regular indexOf didnt work for some reason, so I found this online
+          // I dont know how prototypes or the call keyword work, but:
+          // first arg takes the array, second arg is the element to be indexed
+          if (elemIndex === div.children.length - 1){
+              lastWord = true;
+          }
+
+          if (!lastWord){
+              nextElem = elem.nextElementSibling;
+              // nextElem is the word to the right
+              objectPlaceholder = nextElem;
+              // save nextelem word object to the placeholder
+              div.removeChild(nextElem);
+              // remove it from the array
+              div.insertBefore(objectPlaceholder, div.children[elemIndex]);
+              // insert the word object which was to the right of the selected word,
+              // BEFORE the selected word, so that they swap positions
+          } else {
+              nextElem = div.firstChild;
+              // wrap around to the first word in the sentence
+              objectPlaceholder = elem;
+              // save the selected/last word object in the placeholder
+              div.removeChild(elem);
+              // remove the selected/last word in the sentence)
+              div.insertBefore(nextElem, div.children[elemIndex]);
+              // insert the first word in the sentence in the position of the selected one/the last word
+              div.insertBefore(objectPlaceholder, div.children[0]);
+              // insert the selected/last word at the beginning of the sentence
+          }
+
+        console.log(`${elem.innerHTML}swapped with ${nextElem.innerHTML}`)
+      }
+
+  // Incrementing Color Code ========================================================================
+
+      const colorArr = "0123456789ABCDEF"
+      const startColor = 5;
+      const increment = 2;
+      // startColor starts high so some change is visible right away. it has to be odd when the increment is +2, otherwise it can be anything
+
+      function colorCode(elem){
+          if (elem.className != "selected"){
+              let thisColor = parseInt(elem.id);  // their id starts at 0, then increments
+              let color = "#" + colorArr[startColor + thisColor] + "F0000";
+              elem.style.color = color;
+              console.log(`selected word: ${elem.innerHTML}, color: ${color}`);
+              if (thisColor < colorArr.length - 1 - startColor){
+                  thisColor += increment;
+              }
+              // increment the color as a number, then turn back into string later
+
+              thisColor = String(thisColor);
+              elem.id = thisColor;
+          }
+      }
+
+  </script>
+
+  </head>
+  <body>
+
+    <div id = "container">
+        <form onsubmit = "return false">
+          <!-- using internal divs here just helped format everything -->
+            <div><input name = "input" type = "text" id = "input" autocomplete = "off"
+                   value = "The quick brown fox jumps over the lazy dog"></div>
+            <div><input type = "submit" id = "submit" value = "run"></div>
+        </form>
+
+        <div><input type = "button" id = "btn" onclick = "changeByInc()" value = "toggle"></div>
+        <div id = "status"></div>
+    </div>
+    <br><br>
+    <div id = "sentence"></div>
+
+  </body>
+</html>
